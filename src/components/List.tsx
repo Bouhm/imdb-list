@@ -11,7 +11,7 @@ export function List({ movies }: ListProps): JSX.Element {
   function renderItem({ popularity, title, vote_average, overview, release_date, genres }: IMovie, index: number) {
     return (
       <div key={index} className="list-item">
-        <h3>{title}</h3>
+        <h2>{title}</h2>
         <p>{overview}</p>
         <div>
           <span><b>Score:</b> {vote_average} | </span>

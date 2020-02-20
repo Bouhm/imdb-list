@@ -1,0 +1,9 @@
+.list {
+  display: flex;
+  flex-flow: column;
+  height: 300px;
+}
+
+.list-item {
+  display: flex;
+}

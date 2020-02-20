@@ -1,20 +1,30 @@
 import * as React from "react";
-import "./List.css";
+import { IMovie } from "./App";
+// import "./List.css";
 
-export type ListProps<T> = {
-  items: T[];
+export type ListProps = {
+  movies: IMovie[];
 };
 
-export function List({items}: ListProps<T>): JSX.Element {
+export function List({movies}: ListProps): JSX.Element {
   
-  function renderItem(item<T>, index: number) {
-    return <div />
+  function renderItem({ popularity, title, vote_average, overview, release_date, genre_ids }: IMovie, index: number) {
+    return (
+      <div key={index}>
+        {title}
+        {popularity}
+        {vote_average}
+        {overview}
+        {release_date}
+        {genre_ids}
+      </div>  
+    )
   }
 
   return (
     <div className="list">
-      {items.map(function (item, i) {
-        return renderItem(item, i)
+      {movies.map(function (movie, i) {
+        return renderItem(movie, i);
       })}
     </div>
   );

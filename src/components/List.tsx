@@ -14,10 +14,10 @@ export function List({ movies }: ListProps): JSX.Element {
         <h3>{title}</h3>
         <p>{overview}</p>
         <div>
-          <span>Score: {vote_average} | </span>
-          <span>Released: {release_date} | </span>
+          <span><b>Score:</b> {vote_average} | </span>
+          <span><b>Released:</b> {release_date} | </span>
           <span>
-            Genres: {genres.map(function (genre, i) {
+            <b>Genres:</b> {genres.map(function (genre, i) {
               return i === genres.length - 1 ? genre : genre + ", ";
             })}
           </span>

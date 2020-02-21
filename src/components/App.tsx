@@ -56,33 +56,44 @@ export function App(): JSX.Element {
   const [allMovies, setAllMovies] = useState<IMovie[]>([]);
   useEffect(function () {
     // Check local storage if cached
-    let allMovies: IMovie[];
     let storedData = window.localStorage.getItem("movieList");
 
     if (!storedData) {
-      fetch(
-        API_URL +
-        `discover/movie?api_key=${process.env.REACT_APP_API_KEY}&sort_by=popularity.desc`,
-      )
-        .then(function (res: any) {
-          return res.json();
-        })
-        .then(function (data: any) {
-          allMovies = data.results.map(function (movie: any) {
-            return {
-              id: movie.id,
-              genres: movie.genre_ids.map(function (id: number) { return genreMap[id]; }),
-              overview: movie.overview,
-              popularity: movie.popularity,
-              title: movie.title,
-              vote_average: movie.vote_average,
-              release_date: movie.release_date,
-            };
-          });
+      async function fetchMovies() {
+        const numPages = 5;
 
-          setAllMovies(allMovies);
-          window.localStorage.setItem("movieList", JSON.stringify(allMovies));
-        });
+        let allMovies: IMovie[] = [];
+
+        for (let i = 1; i <= numPages; i++) {
+          await fetch(
+            API_URL +
+            `discover/movie?api_key=${process.env.REACT_APP_API_KEY}&sort_by=popularity.desc&page=${i}`,
+          )
+            .then(function (res: any) {
+              return res.json();
+            })
+            .then(function (data: any) {
+              data.results.forEach(function (movie: any) {
+                allMovies.push({
+                  id: movie.id,
+                  genres: movie.genre_ids.map(function (id: number) { return genreMap[id]; }),
+                  overview: movie.overview,
+                  popularity: movie.popularity,
+                  title: movie.title,
+                  vote_average: movie.vote_average,
+                  release_date: movie.release_date,
+                });
+              });
+            });
+        }
+
+        return allMovies;
+      }
+
+      fetchMovies().then(function (allMovies: IMovie[]) {
+        setAllMovies(allMovies);
+        window.localStorage.setItem("movieList", JSON.stringify(allMovies));
+      });
     } else {
       setAllMovies(JSON.parse(storedData));
     }
@@ -100,7 +111,7 @@ export function App(): JSX.Element {
     for (let i = 0; i < allMovies.length; i++) {
       if (allMovies[i].id === id) {
         console.log("DELETING MOVIE >>>", allMovies[i].title);
-        continue; 
+        continue;
       }
       newMovies.push(allMovies[i]);
     }

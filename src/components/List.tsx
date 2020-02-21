@@ -17,7 +17,7 @@ function ListItem({ id, title, vote_average, overview, release_date, genres, onD
     <div key={`${index}__${id}`} className="list-item">
       <div className="list-item-buttons">
         <span onClick={function () { onDeleteMovie(id); }}>
-          <i className="fa fa-bookmark-o" aria-hidden="true" />
+          <i className="fa fa-trash" aria-hidden="true" />
         </span>
       </div>
       <div>

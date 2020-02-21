@@ -9,7 +9,11 @@
 }
 
 .list-item:hover {
-  background-color: #c0c0c0;
+  /* background-color: #c0c0c0;
+  cursor: pointer; */
+}
+
+.list-item-buttons i:hover {
   cursor: pointer;
 }
 

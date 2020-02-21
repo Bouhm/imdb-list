@@ -4,6 +4,7 @@ import { List } from "./List";
 import "./App.css";
 
 export interface IMovie {
+  id: number;
   genres: string[];
   overview: string;
   popularity: string;
@@ -69,6 +70,7 @@ export function App(): JSX.Element {
         .then(function (data: any) {
           allMovies = data.results.map(function (movie: any) {
             return {
+              id: movie.id,
               genres: movie.genre_ids.map(function (id: number) { return genreMap[id]; }),
               overview: movie.overview,
               popularity: movie.popularity,
@@ -92,6 +94,19 @@ export function App(): JSX.Element {
     setView(e.target.value);
   }
 
+  /** Function for children to delete a single movie based on `id` from `allMovies` */
+  function deleteMovie(id: number) {
+    const newMovies = [];
+    for (let i = 0; i < allMovies.length; i++) {
+      if (allMovies[i].id === id) {
+        console.log("DELETING MOVIE >>>", allMovies[i].title);
+        continue; 
+      }
+      newMovies.push(allMovies[i]);
+    }
+    setAllMovies(newMovies);
+  }
+
   return (
     <div className="app">
       <div className="app-controls">
@@ -100,7 +115,7 @@ export function App(): JSX.Element {
           {views.map(function (option: string) { return <option key={option}>{option}</option> })}
         </select>
       </div>
-      {allMovies && <List movies={allMovies} />}
+      {allMovies && <List movies={allMovies} onDeleteMovie={deleteMovie} />}
     </div>
   );
 }

@@ -4,15 +4,23 @@ import "./List.css";
 
 export type ListProps = {
   movies: IMovie[];
+  onDeleteMovie(id: number): void;
 };
 
-export function List({ movies }: ListProps): JSX.Element {
+export function List({ movies, onDeleteMovie }: ListProps): JSX.Element {
+  
+  function renderItem({ id, title, vote_average, overview, release_date, genres }: IMovie, index: number) {
+    function handleDeleteMovie() {
+      console.log("m to d in child::", id);
+      onDeleteMovie(id);
+    }
 
-  function renderItem({ popularity, title, vote_average, overview, release_date, genres }: IMovie, index: number) {
     return (
       <div key={index} className="list-item">
         <div className="list-item-buttons">
-          <span><i className="fa fa-bookmark-o" aria-hidden="true" /></span>
+          <span onClick={handleDeleteMovie}>
+            <i className="fa fa-bookmark-o" aria-hidden="true" />
+          </span>
         </div>
         <div>
           <h2>{index + 1}. {title}</h2>

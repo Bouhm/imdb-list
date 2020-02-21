@@ -106,7 +106,7 @@ export function App(): JSX.Element {
   }
 
   /** Function for children to delete a single movie based on `id` from `allMovies` */
-  function deleteMovie(id: number) {
+  function handleDeleteMovie(id: number) {
     const newMovies = [];
     for (let i = 0; i < allMovies.length; i++) {
       if (allMovies[i].id === id) {
@@ -126,7 +126,7 @@ export function App(): JSX.Element {
           {views.map(function (option: string) { return <option key={option}>{option}</option> })}
         </select>
       </div>
-      {allMovies && <List movies={allMovies} onDeleteMovie={deleteMovie} />}
+      {allMovies && <List movies={allMovies} onDeleteMovie={handleDeleteMovie} />}
     </div>
   );
 }

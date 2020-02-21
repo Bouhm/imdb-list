@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { List } from "./List";
 import "./App.css";
 
@@ -60,7 +60,7 @@ export function App(): JSX.Element {
 
     if (!storedData) {
       async function fetchMovies() {
-        const numPages = 5;
+        const numPages = 25; // 500 results
 
         let allMovies: IMovie[] = [];
 
@@ -99,31 +99,44 @@ export function App(): JSX.Element {
     }
   }, [genreMap]);
 
-  const views = ["all", "saved"]
+  const views = ["all", "saved"];
   const [view, setView] = useState<string>("all");
   function handleSelectView(e: React.ChangeEvent<HTMLSelectElement>) {
     setView(e.target.value);
   }
 
   /** Function for children to delete a single movie based on `id` from `allMovies` */
-  function handleDeleteMovie(id: number) {
-    const newMovies = [];
-    for (let i = 0; i < allMovies.length; i++) {
-      if (allMovies[i].id === id) {
-        console.log("DELETING MOVIE >>>", allMovies[i].title);
-        continue;
+  // const handleDeleteMovie = (id: number) => {
+  //   const newMovies = [];
+  //   for (let i = 0; i < allMovies.length; i++) {
+  //     if (allMovies[i].id === id) {
+  //       console.log("DELETING MOVIE >>>", allMovies[i].title);
+  //       continue;
+  //     }
+  //     newMovies.push(allMovies[i]);
+  //   }
+  //   setAllMovies(newMovies);
+  // };
+
+  const handleDeleteMovie = useCallback(
+    (id: number) => {
+      const newMovies = [];
+      for (let i = 0; i < allMovies.length; i++) {
+        if (allMovies[i].id === id) {
+          console.log("DELETING MOVIE >>>", allMovies[i].title);
+          continue;
+        }
+        newMovies.push(allMovies[i]);
       }
-      newMovies.push(allMovies[i]);
-    }
-    setAllMovies(newMovies);
-  }
+      setAllMovies(newMovies);
+    }, [allMovies]);
 
   return (
     <div className="app">
       <div className="app-controls">
         <label>View: </label>
         <select onChange={handleSelectView} value={view}>
-          {views.map(function (option: string) { return <option key={option}>{option}</option> })}
+          {views.map(function (option: string) { return <option key={option}>{option}</option>; })}
         </select>
       </div>
       {allMovies && <List movies={allMovies} onDeleteMovie={handleDeleteMovie} />}

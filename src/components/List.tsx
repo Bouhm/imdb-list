@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useCallback } from "react";
 import { IMovie } from "./App";
 import "./List.css";
 
@@ -14,17 +13,10 @@ type ListItemProps = IMovie & {
 };
 
 function ListItem({ id, title, vote_average, overview, release_date, genres, onDeleteMovie, index }: ListItemProps) {
-  const memoizedDeleteMovie = useCallback(
-    () => {
-      onDeleteMovie(id);
-    },
-    [id],
-  );
-
   return (
     <div key={`${index}__${id}`} className="list-item">
       <div className="list-item-buttons">
-        <span onClick={memoizedDeleteMovie}>
+        <span onClick={function () { onDeleteMovie(id); }}>
           <i className="fa fa-bookmark-o" aria-hidden="true" />
         </span>
       </div>
@@ -46,10 +38,10 @@ function ListItem({ id, title, vote_average, overview, release_date, genres, onD
 }
 
 export function List({ movies, onDeleteMovie }: ListProps): JSX.Element {
-  
+
   function renderItem(movie: IMovie, index: number) {
     return (
-      <ListItem  
+      <ListItem
         {...movie}
         key={movie.id}
         index={index}

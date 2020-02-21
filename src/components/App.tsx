@@ -52,10 +52,10 @@ export function App(): JSX.Element {
   /**
    * Fetch movies, set state, and cache to local storage
    */
-  const [movieData, setMovieData] = useState<IMovie[]>([]);
+  const [allMovies, setAllMovies] = useState<IMovie[]>([]);
   useEffect(function () {
     // Check local storage if cached
-    let movieData: IMovie[];
+    let allMovies: IMovie[];
     let storedData = window.localStorage.getItem("movieList");
 
     if (!storedData) {
@@ -67,7 +67,7 @@ export function App(): JSX.Element {
           return res.json();
         })
         .then(function (data: any) {
-          movieData = data.results.map(function (movie: any) {
+          allMovies = data.results.map(function (movie: any) {
             return {
               genres: movie.genre_ids.map(function (id: number) { return genreMap[id]; }),
               overview: movie.overview,
@@ -78,15 +78,29 @@ export function App(): JSX.Element {
             };
           });
 
-          setMovieData(movieData);
-          window.localStorage.setItem("movieList", JSON.stringify(movieData));
+          setAllMovies(allMovies);
+          window.localStorage.setItem("movieList", JSON.stringify(allMovies));
         });
     } else {
-      setMovieData(JSON.parse(storedData));
+      setAllMovies(JSON.parse(storedData));
     }
   }, [genreMap]);
 
+  const views = ["all", "saved"]
+  const [view, setView] = useState<string>("all");
+  function handleSelectView(e: React.ChangeEvent<HTMLSelectElement>) {
+    setView(e.target.value);
+  }
+
   return (
-    <div className="app">{movieData && <List movies={movieData} />}</div>
+    <div className="app">
+      <div className="app-controls">
+        <label>View: </label>
+        <select onChange={handleSelectView} value={view}>
+          {views.map(function (option: string) { return <option key={option}>{option}</option> })}
+        </select>
+      </div>
+      {allMovies && <List movies={allMovies} />}
+    </div>
   );
 }

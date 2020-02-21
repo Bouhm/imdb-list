@@ -1,2 +1,7 @@
 .app {
 }
+
+.app-controls {
+  height: 30px;
+  padding: 1rem;
+}

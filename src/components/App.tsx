@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { List } from "./List";
 import "./App.css";
 
@@ -99,47 +99,55 @@ export function App(): JSX.Element {
     }
   }, [genreMap]);
 
-  const views = ["all", "saved"];
-  const [view, setView] = useState<string>("all");
-  function handleSelectView(e: React.ChangeEvent<HTMLSelectElement>) {
-    setView(e.target.value);
+  const [showList, setShowList] = useState<boolean>(false);
+  function handleToggleView(e: React.FormEvent<HTMLButtonElement>) {
+    setShowList(!showList);
   }
 
   /** Function for children to delete a single movie based on `id` from `allMovies` */
-  // const handleDeleteMovie = (id: number) => {
-  //   const newMovies = [];
-  //   for (let i = 0; i < allMovies.length; i++) {
-  //     if (allMovies[i].id === id) {
-  //       console.log("DELETING MOVIE >>>", allMovies[i].title);
-  //       continue;
-  //     }
-  //     newMovies.push(allMovies[i]);
-  //   }
-  //   setAllMovies(newMovies);
-  // };
-
-  const handleDeleteMovie = useCallback(
-    (id: number) => {
-      const newMovies = [];
-      for (let i = 0; i < allMovies.length; i++) {
-        if (allMovies[i].id === id) {
-          console.log("DELETING MOVIE >>>", allMovies[i].title);
-          continue;
-        }
-        newMovies.push(allMovies[i]);
+  const handleDeleteMovie = (id: number) => {
+    const newMovies = [];
+    for (let i = 0; i < allMovies.length; i++) {
+      if (allMovies[i].id === id) {
+        console.log("DELETING MOVIE >>>", allMovies[i].title);
+        continue;
       }
-      setAllMovies(newMovies);
-    }, [allMovies]);
+      newMovies.push(allMovies[i]);
+    }
+    setAllMovies(newMovies);
+  };
+
+  // const handleDeleteMovie = useCallback(
+  //   (id: number) => {
+  //     const newMovies = [];
+  //     for (let i = 0; i < allMovies.length; i++) {
+  //       if (allMovies[i].id === id) {
+  //         console.log("DELETING MOVIE >>>", allMovies[i].title);
+  //         continue;
+  //       }
+  //       newMovies.push(allMovies[i]);
+  //     }
+  //     setAllMovies(newMovies);
+  //   }, [allMovies]);
 
   return (
     <div className="app">
-      <div className="app-controls">
-        <label>View: </label>
-        <select onChange={handleSelectView} value={view}>
-          {views.map(function (option: string) { return <option key={option}>{option}</option>; })}
-        </select>
-      </div>
-      {allMovies && <List movies={allMovies} onDeleteMovie={handleDeleteMovie} />}
+      {!showList ?
+        (
+          <div className="home">
+            <h1>Classes vs Hooks</h1>
+            <img src={process.env.PUBLIC_URL + "image.png"} alt="hooks" />
+            <br />
+            <button onClick={handleToggleView}>Render List</button>
+          </div>
+        ) : (
+          <div className="list-container">
+            <div className="stickybar">
+              <button onClick={handleToggleView}>Back</button>
+            </div>
+            {allMovies && <List movies={allMovies} onDeleteMovie={handleDeleteMovie} />}
+          </div>
+        )}
     </div>
   );
 }

@@ -1,7 +1,41 @@
-.app {
+.home {
+  text-align: center;
+}
+
+h1 {
+  padding: 1rem;
 }
 
 .app-controls {
   height: 30px;
   padding: 1rem;
+}
+
+img {
+  margin-bottom: 2rem;
+}
+
+.list-container {
+  position: relative;
+}
+
+.stickybar { 
+  position: sticky;
+  top: 0;
+  padding: 1rem;
+}
+
+button {
+  cursor: pointer;
+  color: white;
+  border: 3px solid black;
+  background-color: dimgray;
+  border-radius: 5px;
+  font-size: 1.2em;
+  height: 3em;
+  width: 8em;
+}
+
+button:hover {
+  background-color: gray;
 }

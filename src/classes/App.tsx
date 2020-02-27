@@ -1,28 +1,15 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { List } from "./List";
-import "./App.css";
-
-export interface IMovie {
-  id: number;
-  genres: string[];
-  overview: string;
-  popularity: string;
-  title: string;
-  vote_average: string;
-  release_date: string;
-}
-
-export interface IGenre {
-  [id: number]: string;
-}
+import { IMovie, IGenre } from "../interfaces";
+import "../styles/App.css";
 
 const API_URL = "https://api.themoviedb.org/3/";
 
 /**
  * Fetch genres, map genre id to name in state, cache to local storage
  */
-export function App(): JSX.Element {
+export function ClassesApp(): JSX.Element {
   const [genreMap, setGenreMap] = useState<IGenre>({});
   useEffect(function () {
     // Check local storage if cached
@@ -135,7 +122,7 @@ export function App(): JSX.Element {
       {!showList ?
         (
           <div className="home">
-            <h1>Classes vs Hooks</h1>
+            <h1><span className="highlight">Classes</span> vs Hooks</h1>
             <img src={process.env.PUBLIC_URL + "image.png"} alt="hooks" />
             <br />
             <button onClick={handleToggleView}>Render List</button>

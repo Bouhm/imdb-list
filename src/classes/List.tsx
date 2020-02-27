@@ -1,6 +1,6 @@
 import * as React from "react";
-import { IMovie } from "./App";
-import "./List.css";
+import { IMovie } from "../interfaces";
+import "../styles/List.css";
 
 export type ListProps = {
   movies: IMovie[];

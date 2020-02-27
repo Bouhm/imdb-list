@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { App } from "./components/App";
+import { ClassesApp } from "./classes/App";
+import { HooksApp } from "./hooks/App";
 import "./index.css";
 
-
-ReactDOM.render(<App />, document.getElementById("root"));
+const implementation = process.env.REACT_APP_IMPL ? process.env.REACT_APP_IMPL.trim() : "hooks";
+ReactDOM.render(implementation === "hooks" ? <HooksApp /> : <ClassesApp />, document.getElementById("root"));

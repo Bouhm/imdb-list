@@ -6,6 +6,11 @@ h1 {
   padding: 1rem;
 }
 
+.highlight {
+  font-weight: bold;
+  color: #42B3CC;
+}
+
 .app-controls {
   height: 30px;
   padding: 1rem;

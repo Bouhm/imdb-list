@@ -21,7 +21,8 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "hooks:start": "set REACT_APP_IMPL='hooks' && set PORT=3000 && react-scripts start",
+    "class:start": "set REACT_APP_IMPL='classes' && set PORT=3001 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

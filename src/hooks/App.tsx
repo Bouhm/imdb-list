@@ -141,8 +141,8 @@ export function HooksApp(): JSX.Element {
             <div className="stickybar">
               <button onClick={handleToggleView}>Back</button>
               <div className="new-movie">
-                Title: <input name="title" type="text" onChange={handleInputChange} value={formData.title} />
-                Overview: <input name="overview" type="text" onChange={handleInputChange} value={formData.overview} />
+                Title: <input name="title" type="text" onChange={handleInputChange} value={formData.title} />{" "}
+                Overview: <input name="overview" type="text" onChange={handleInputChange} value={formData.overview} />{" "}
                 <button onClick={handleAddMovie}>Add Movie</button>
               </div>
             </div>

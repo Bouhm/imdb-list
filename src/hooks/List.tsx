@@ -1,7 +1,7 @@
 import * as React from "react";
-import { useContext, useCallback } from "react";
+import { useContext } from "react";
 import { IMovie } from "../interfaces";
-import { Store } from "./Store";
+import { Store } from "./redux/Store";
 import "../styles/List.css";
 
 export type ListProps = {
@@ -9,12 +9,8 @@ export type ListProps = {
 };
 
 type ListItemProps = IMovie & {
-  index: number
-  onDeleteMovie(id: number): void,
+  index: number,
 };
-
-const [state] = useContext(Store);
-const { movies, genres } = state;
 
 function ListItem({
   id,
@@ -22,17 +18,19 @@ function ListItem({
   vote_average,
   overview,
   release_date,
-  onDeleteMovie,
   index,
 }: ListItemProps) {
-  const memoizedDeleteMovie = useCallback(() => {
-    onDeleteMovie(id);
-  }, [id, movies]);
+  const [state, dispatch] = useContext(Store);
+  const { genres } = state;
+
+  function deleteItem() {
+    dispatch({ type: "DELETE_ITEM", payload: index });
+  }
 
   return (
     <div key={`${index}__${id}`} className="list-item">
       <div className="list-item-buttons">
-        <span onClick={memoizedDeleteMovie}>
+        <span onClick={deleteItem}>
           <i className="fa fa-trash" aria-hidden="true" />
         </span>
       </div>
@@ -60,14 +58,16 @@ function ListItem({
   );
 }
 
-export function List({ onDeleteMovie }: ListProps): JSX.Element {
+export function List(): JSX.Element {
+  const [state] = useContext(Store);
+  const { movies } = state;
+
   function renderItem(movie: IMovie, index: number) {
     return (
       <ListItem
         {...movie}
         key={movie.id}
         index={index}
-        onDeleteMovie={onDeleteMovie}
       />
     );
   }

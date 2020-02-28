@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { List } from "./List";
 import { IMovie, IGenre } from "../interfaces";
 import "../styles/App.css";
-import { Store } from "./Store";
+import { Store } from "./redux/Store";
 
 const API_URL = "https://api.themoviedb.org/3/";
 
@@ -97,18 +97,6 @@ export function HooksApp(): JSX.Element {
     setShowList(!showList);
   }
 
-  /** Function for children to delete a single movie based on `id` from `allMovies` */
-  const handleDeleteMovie = (id: number) => {
-    const movieToDelete = movies.find(function (movie) {
-      return movie.id === id;
-    });
-
-    if (movieToDelete) {
-      console.log(`DELETING MOVIE >>> ${movieToDelete.title}`)
-      dispatch({ type: "DELETE_MOVIE", payload: movieToDelete });
-    }
-  };
-
   return (
     <div className="app">
       {!showList ? (
@@ -126,7 +114,7 @@ export function HooksApp(): JSX.Element {
               <button onClick={handleToggleView}>Back</button>
             </div>
             {movies && (
-              <List onDeleteMovie={handleDeleteMovie} />
+              <List />
             )}
           </div>
         )}

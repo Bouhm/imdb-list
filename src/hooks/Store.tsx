@@ -37,7 +37,16 @@ export const reducer = (state: IState, action: IAction): IState => {
     case "SET_GENRES":
       return { ...state, genres: action.payload };
     case "SET_MOVIES":
-      return { ...state, movies: action.payload };
+      return { ...state, movies: [...state.movies, action.payload] };
+    case "ADD_MOVIE":
+      let newMovies = [...state.movies];
+      const index = newMovies.indexOf(action.payload);
+
+      if (index > -1) {
+        newMovies.splice(index, 1);
+      }
+
+      return { ...state, movies: newMovies };
     default:
       return state;
   }

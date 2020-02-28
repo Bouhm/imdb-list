@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react"; // import { useContext, useEffect, useState } from "react";
 import { List } from "./List";
 import { IMovie, IGenre } from "../interfaces";
 import "../styles/App.css";
-import { Store } from "./Store";
+// import { Store } from "./Store";
 
 const API_URL = "https://api.themoviedb.org/3/";
 
@@ -11,7 +11,7 @@ const API_URL = "https://api.themoviedb.org/3/";
  * Fetch genres, map genre id to name in state, cache to local storage
  */
 export function HooksApp(): JSX.Element {
-  const [state, dispatch] = useContext(Store);
+  // const [state, dispatch] = useContext(Store);
 
   const [genreMap, setGenreMap] = useState<IGenre>({});
   useEffect(function () {
@@ -32,12 +32,12 @@ export function HooksApp(): JSX.Element {
           });
 
           setGenreMap(genreData);
-          dispatch({ type: "SET_GENRES", payload: genreData });
+          // dispatch({ type: "SET_GENRES", payload: genreData });
           window.localStorage.setItem("genres", JSON.stringify(genreData));
         });
     } else {
       setGenreMap(JSON.parse(storedData));
-      dispatch({ type: "SET_GENRES", payload: storedData });
+      // dispatch({ type: "SET_GENRES", payload: storedData });
     }
   }, []);
 

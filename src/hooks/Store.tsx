@@ -36,9 +36,11 @@ export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
     case "SET_GENRES":
       return { ...state, genres: action.payload };
-    case "SET_MOVIES":
-      return { ...state, movies: [...state.movies, action.payload] };
+    case "SET_GENRES":
+      return { ...state, movies: action.payload };
     case "ADD_MOVIE":
+      return { ...state, movies: [...state.movies, action.payload] };
+    case "DELETE_MOVIE":
       let newMovies = [...state.movies];
       const index = newMovies.indexOf(action.payload);
 

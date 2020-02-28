@@ -1,10 +1,10 @@
 import * as React from "react";
-import { useCallback } from "react";
+import { useContext, useCallback } from "react";
 import { IMovie } from "../interfaces";
+import { Store } from "./Store";
 import "../styles/List.css";
 
 export type ListProps = {
-  movies: IMovie[]
   onDeleteMovie(id: number): void,
 };
 
@@ -13,13 +13,15 @@ type ListItemProps = IMovie & {
   onDeleteMovie(id: number): void,
 };
 
+const [state] = useContext(Store);
+const { movies, genres } = state;
+
 function ListItem({
   id,
   title,
   vote_average,
   overview,
   release_date,
-  genres,
   onDeleteMovie,
   index,
 }: ListItemProps) {
@@ -58,7 +60,7 @@ function ListItem({
   );
 }
 
-export function List({ movies, onDeleteMovie }: ListProps): JSX.Element {
+export function List({ onDeleteMovie }: ListProps): JSX.Element {
   function renderItem(movie: IMovie, index: number) {
     return (
       <ListItem

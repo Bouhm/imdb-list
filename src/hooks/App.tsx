@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useEffect, useState } from "react"; // import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { List } from "./List";
 import { IMovie, IGenre } from "../interfaces";
 import "../styles/App.css";
-// import { Store } from "./Store";
+import { Store } from "./Store";
 
 const API_URL = "https://api.themoviedb.org/3/";
 
@@ -11,11 +11,11 @@ const API_URL = "https://api.themoviedb.org/3/";
  * Fetch genres, map genre id to name in state, cache to local storage
  */
 export function HooksApp(): JSX.Element {
-  // const [state, dispatch] = useContext(Store);
+  const [state, dispatch] = useContext(Store);
+  const { movies, genres } = state;
 
-  const [genreMap, setGenreMap] = useState<IGenre>({});
   useEffect(function () {
-    // Check local storage if cached
+    // Check local storag1e if cached
     let genreData: IGenre = {};
     let storedData = window.localStorage.getItem("genres");
 
@@ -31,20 +31,17 @@ export function HooksApp(): JSX.Element {
             genreData[genre.id] = genre.name;
           });
 
-          setGenreMap(genreData);
-          // dispatch({ type: "SET_GENRES", payload: genreData });
+          dispatch({ type: "SET_GENRES", payload: genreData });
           window.localStorage.setItem("genres", JSON.stringify(genreData));
         });
     } else {
-      setGenreMap(JSON.parse(storedData));
-      // dispatch({ type: "SET_GENRES", payload: storedData });
+      dispatch({ type: "SET_GENRES", payload: JSON.parse(storedData) });
     }
   }, []);
 
   /**
    * Fetch movies, set state, and cache to local storage
    */
-  const [allMovies, setAllMovies] = useState<IMovie[]>([]);
   useEffect(
     function () {
       // Check local storage if cached
@@ -69,7 +66,7 @@ export function HooksApp(): JSX.Element {
                   allMovies.push({
                     id: movie.id,
                     genres: movie.genre_ids.map(function (id: number) {
-                      return genreMap[id];
+                      return genres[id];
                     }),
                     overview: movie.overview,
                     popularity: movie.popularity,
@@ -85,16 +82,14 @@ export function HooksApp(): JSX.Element {
         }
 
         fetchMovies().then(function (allMovies: IMovie[]) {
-          setAllMovies(allMovies);
           dispatch({ type: "SET_MOVIES", payload: allMovies });
           window.localStorage.setItem("movieList", JSON.stringify(allMovies));
         });
       } else {
-        setAllMovies(JSON.parse(storedData));
         dispatch({ type: "SET_MOVIES", payload: storedData });
       }
     },
-    [genreMap],
+    [genres],
   );
 
   const [showList, setShowList] = useState<boolean>(false);
@@ -104,15 +99,14 @@ export function HooksApp(): JSX.Element {
 
   /** Function for children to delete a single movie based on `id` from `allMovies` */
   const handleDeleteMovie = (id: number) => {
-    const newMovies = [];
-    for (let i = 0; i < allMovies.length; i++) {
-      if (allMovies[i].id === id) {
-        console.log("DELETING MOVIE >>>", allMovies[i].title);
-        continue;
-      }
-      newMovies.push(allMovies[i]);
+    const movieToDelete = movies.find(function (movie) {
+      return movie.id === id;
+    });
+
+    if (movieToDelete) {
+      console.log(`DELETING MOVIE >>> ${movieToDelete.title}`)
+      dispatch({ type: "DELETE_MOVIE", payload: movieToDelete });
     }
-    setAllMovies(newMovies);
   };
 
   return (
@@ -131,8 +125,8 @@ export function HooksApp(): JSX.Element {
             <div className="stickybar">
               <button onClick={handleToggleView}>Back</button>
             </div>
-            {allMovies && (
-              <List movies={allMovies} onDeleteMovie={handleDeleteMovie} />
+            {movies && (
+              <List onDeleteMovie={handleDeleteMovie} />
             )}
           </div>
         )}

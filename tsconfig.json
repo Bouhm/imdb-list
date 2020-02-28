@@ -9,28 +9,18 @@
     "allowJs": true,
     "outDir": "./public",
     "jsx": "react",
-    "lib": [
-      "dom",
-      "es2015",
-      "es2016",
-      "es2017",
-      "es2018"
-    ],
+    "lib": ["dom", "es2015", "es2016", "es2017", "es2018"],
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": [
-    "./src"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["./src"],
+  "exclude": ["node_modules"]
 }

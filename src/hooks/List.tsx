@@ -15,13 +15,14 @@ type ListItemProps = IMovie & {
 function ListItem({
   id,
   title,
+  genres,
   vote_average,
   overview,
   release_date,
   index,
 }: ListItemProps) {
   const [state, dispatch] = useContext(Store);
-  const { genres } = state;
+  const { genreMap } = state;
 
   function deleteItem() {
     dispatch({ type: "DELETE_ITEM", payload: index });

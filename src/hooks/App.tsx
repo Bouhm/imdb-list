@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useContext, useEffect, useState } from "react";
 import { List } from "./List";
-import { IMovie, IGenre } from "../interfaces";
+import { IMovie, IGenreMap } from "../interfaces";
 import "../styles/App.css";
 import { Store } from "./redux/Store";
 
@@ -12,11 +12,11 @@ const API_URL = "https://api.themoviedb.org/3/";
  */
 export function HooksApp(): JSX.Element {
   const [state, dispatch] = useContext(Store);
-  const { movies, genres } = state;
+  const { movies, genreMap } = state;
 
   useEffect(function () {
     // Check local storag1e if cached
-    let genreData: IGenre = {};
+    let genreData: IGenreMap = {};
     let storedData = window.localStorage.getItem("genres");
 
     if (!storedData) {
@@ -66,7 +66,7 @@ export function HooksApp(): JSX.Element {
                   allMovies.push({
                     id: movie.id,
                     genres: movie.genre_ids.map(function (id: number) {
-                      return genres[id];
+                      return genreMap[id];
                     }),
                     overview: movie.overview,
                     popularity: movie.popularity,
@@ -89,11 +89,11 @@ export function HooksApp(): JSX.Element {
         dispatch({ type: "SET_MOVIES", payload: storedData });
       }
     },
-    [genres],
+    [genreMap],
   );
 
   const [showList, setShowList] = useState<boolean>(false);
-  function handleToggleView(e: React.FormEvent<HTMLButtonElement>) {
+  function handleToggleView() {
     setShowList(!showList);
   }
 

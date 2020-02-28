@@ -1,14 +1,14 @@
 import * as React from "react";
 import { useReducer } from "react";
-import { IMovie, IGenre } from "../../interfaces";
+import { IMovie, IGenreMap } from "../../interfaces";
 
 interface IState {
-  genres: IGenre[];
+  genreMap: IGenreMap;
   movies: IMovie[];
 }
 
 export const initialState: IState = {
-  genres: [],
+  genreMap: [],
   movies: [],
 };
 
@@ -35,8 +35,7 @@ interface IAction {
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
     case "SET_GENRES":
-      console.log(action.payload)
-      return { ...state, genres: action.payload };
+      return { ...state, genreMap: action.payload };
     case "SET_MOVIES":
       return { ...state, movies: action.payload };
     case "ADD_MOVIE":

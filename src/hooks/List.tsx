@@ -4,10 +4,6 @@ import { IMovie } from "../interfaces";
 import { Store } from "./redux/Store";
 import "../styles/List.css";
 
-export type ListProps = {
-  onDeleteMovie(id: number): void,
-};
-
 type ListItemProps = IMovie & {
   index: number,
 };
@@ -21,8 +17,7 @@ function ListItem({
   release_date,
   index,
 }: ListItemProps) {
-  const [state, dispatch] = useContext(Store);
-  const { genreMap } = state;
+  const [, dispatch] = useContext(Store);
 
   function deleteItem() {
     dispatch({ type: "DELETE_ITEM", payload: index });
@@ -62,6 +57,8 @@ function ListItem({
 export function List(): JSX.Element {
   const [state] = useContext(Store);
   const { movies } = state;
+
+  console.log(movies)
 
   function renderItem(movie: IMovie, index: number) {
     return (

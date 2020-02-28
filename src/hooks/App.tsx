@@ -31,6 +31,7 @@ export function HooksApp(): JSX.Element {
             genreData[genre.id] = genre.name;
           });
 
+          console.log(genreData)
           dispatch({ type: "SET_GENRES", payload: genreData });
           window.localStorage.setItem("genres", JSON.stringify(genreData));
         });
@@ -86,7 +87,7 @@ export function HooksApp(): JSX.Element {
           window.localStorage.setItem("movieList", JSON.stringify(allMovies));
         });
       } else {
-        dispatch({ type: "SET_MOVIES", payload: storedData });
+        dispatch({ type: "SET_MOVIES", payload: JSON.parse(storedData) });
       }
     },
     [genreMap],
@@ -113,7 +114,7 @@ export function HooksApp(): JSX.Element {
             <div className="stickybar">
               <button onClick={handleToggleView}>Back</button>
             </div>
-            {movies && (
+            {movies.length && (
               <List />
             )}
           </div>

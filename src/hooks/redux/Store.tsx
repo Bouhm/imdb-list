@@ -8,7 +8,7 @@ interface IState {
 }
 
 export const initialState: IState = {
-  genreMap: [],
+  genreMap: {},
   movies: [],
 };
 

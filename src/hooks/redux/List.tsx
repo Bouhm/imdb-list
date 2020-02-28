@@ -36,18 +36,24 @@ function ListItem({
         </h2>
         <p>{overview}</p>
         <div>
-          <span>
-            <b>Score:</b> {vote_average} |{" "}
-          </span>
-          <span>
-            <b>Released:</b> {release_date} |{" "}
-          </span>
-          <span>
-            <b>Genres:</b>{" "}
-            {genres.map(function (genre, i) {
-              return i === genres.length - 1 ? genre : genre + ", ";
-            })}
-          </span>
+          {vote_average &&
+            <span>
+              <b>Score:</b> {vote_average} |{" "}
+            </span>
+          }
+          {release_date &&
+            <span>
+              <b>Released:</b> {release_date} |{" "}
+            </span>
+          }
+          {genres &&
+            <span>
+              <b>Genres:</b>{" "}
+              {genres.map(function (genre, i) {
+                return i === genres.length - 1 ? genre : genre + ", ";
+              })}
+            </span>
+          }
         </div>
       </div>
     </div>
@@ -57,8 +63,6 @@ function ListItem({
 export function List(): JSX.Element {
   const [state] = useContext(Store);
   const { movies } = state;
-
-  console.log(movies)
 
   function renderItem(movie: IMovie, index: number) {
     return (

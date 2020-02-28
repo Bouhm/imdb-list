@@ -2,6 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { List } from "./List";
 import { IMovie, IGenreMap } from "../interfaces";
+import { useForm } from "./useForm";
 import "../styles/App.css";
 
 const API_URL = "https://api.themoviedb.org/3/";
@@ -104,6 +105,27 @@ export function HooksApp(): JSX.Element {
     setAllMovies(newMovies);
   };
 
+  const { formData, handleInputChange } = useForm({ title: "", overview: "" });
+
+  /** Function for children to delete a single movie based on `id` from `allMovies` */
+  const handleAddMovie = () => {
+    const { title, overview } = formData;
+    const id = Date.now();
+    const newMovies = [...allMovies];
+
+    newMovies.push({
+      id,
+      title,
+      overview,
+      genres: [],
+      popularity: "",
+      vote_average: "",
+      release_date: "",
+    });
+
+    setAllMovies(newMovies);
+  };
+
   return (
     <div className="app">
       {!showList ?
@@ -118,6 +140,11 @@ export function HooksApp(): JSX.Element {
           <div className="list-container">
             <div className="stickybar">
               <button onClick={handleToggleView}>Back</button>
+              <div className="new-movie">
+                Title: <input name="title" type="text" onChange={handleInputChange} value={formData.title} />
+                Overview: <input name="overview" type="text" onChange={handleInputChange} value={formData.overview} />
+                <button onClick={handleAddMovie}>Add Movie</button>
+              </div>
             </div>
             {allMovies && <List movies={allMovies} onDeleteMovie={handleDeleteMovie} />}
           </div>

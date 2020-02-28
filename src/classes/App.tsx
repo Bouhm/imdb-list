@@ -1,140 +1,146 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
 import { List } from "./List";
-import { IMovie, IGenre } from "../interfaces";
+import { IMovie, IGenreMap } from "../interfaces";
 import "../styles/App.css";
 
 const API_URL = "https://api.themoviedb.org/3/";
 
-/**
- * Fetch genres, map genre id to name in state, cache to local storage
- */
-export function ClassesApp(): JSX.Element {
-  const [genreMap, setGenreMap] = useState<IGenre>({});
-  useEffect(function () {
-    // Check local storage if cached
-    let genreData: IGenre = {};
-    let storedData = window.localStorage.getItem("genres");
+export type ClassesAppProps = {};
 
-    if (!storedData) {
-      fetch(
+type ClassesAppState = {
+  allMovies?: IMovie[];
+  genreMap?: IGenreMap;
+  showList?: boolean;
+};
+
+export class ClassImdbApp extends React.Component<ClassesAppProps, ClassesAppState> {
+  state: ClassesAppState = {};
+
+  public async componentDidMount() {
+    // Check local storage if cached
+    let storedGenres = window.localStorage.getItem("genres");
+
+    if (!storedGenres) {
+      await fetch(
         API_URL +
         `genre/movie/list?api_key=${process.env.REACT_APP_API_KEY}`,
       )
-        .then(function (res: any) {
-          return res.json();
-        })
-        .then(function (data: any) {
-          data.genres.forEach(function (genre: any) {
-            genreData[genre.id] = genre.name;
-          });
-
-          setGenreMap(genreData);
-          window.localStorage.setItem("genres", JSON.stringify(genreData));
-        });
-    } else {
-      setGenreMap(JSON.parse(storedData));
+        .then(this.handleGenerateJson)
+        .then(this.handleGenerateGenreMap);
+    } 
+    else {
+      this.setState({ genreMap: JSON.parse(storedGenres) });
     }
-  }, []);
 
-  /**
-   * Fetch movies, set state, and cache to local storage
-   */
-  const [allMovies, setAllMovies] = useState<IMovie[]>([]);
-  useEffect(function () {
     // Check local storage if cached
-    let storedData = window.localStorage.getItem("movieList");
+    let storedMovies = window.localStorage.getItem("movieList");
 
-    if (!storedData) {
-      async function fetchMovies() {
-        const numPages = 25; // 500 results
-
-        let allMovies: IMovie[] = [];
-
-        for (let i = 1; i <= numPages; i++) {
-          await fetch(
-            API_URL +
-            `discover/movie?api_key=${process.env.REACT_APP_API_KEY}&sort_by=popularity.desc&page=${i}`,
-          )
-            .then(function (res: any) {
-              return res.json();
-            })
-            .then(function (data: any) {
-              data.results.forEach(function (movie: any) {
-                allMovies.push({
-                  id: movie.id,
-                  genres: movie.genre_ids.map(function (id: number) { return genreMap[id]; }),
-                  overview: movie.overview,
-                  popularity: movie.popularity,
-                  title: movie.title,
-                  vote_average: movie.vote_average,
-                  release_date: movie.release_date,
-                });
-              });
-            });
-        }
-
-        return allMovies;
-      }
-
-      fetchMovies().then(function (allMovies: IMovie[]) {
-        setAllMovies(allMovies);
-        window.localStorage.setItem("movieList", JSON.stringify(allMovies));
-      });
-    } else {
-      setAllMovies(JSON.parse(storedData));
+    if (!storedMovies) {
+      const allMovies: IMovie[] = await this.handleFetchMovies();
+      this.setState({ allMovies });
+      window.localStorage.setItem("movieList", JSON.stringify(allMovies));
     }
-  }, [genreMap]);
-
-  const [showList, setShowList] = useState<boolean>(false);
-  function handleToggleView(e: React.FormEvent<HTMLButtonElement>) {
-    setShowList(!showList);
+    else {
+      this.setState({ allMovies: JSON.parse(storedMovies) });
+    }
   }
 
-  /** Function for children to delete a single movie based on `id` from `allMovies` */
-  const handleDeleteMovie = (id: number) => {
-    const newMovies = [];
-    for (let i = 0; i < allMovies.length; i++) {
-      if (allMovies[i].id === id) {
-        console.log("DELETING MOVIE >>>", allMovies[i].title);
-        continue;
-      }
-      newMovies.push(allMovies[i]);
+  private handleGenerateJson(res: any) {
+    return res.json();
+  }
+
+  private handleGenerateGenreMap(data: any): IGenreMap {
+    const genreMap: IGenreMap = {};
+
+    for (let i = 0; i < data.genres.length; i++) {
+      const g = data.genres[i];
+      genreMap[g.id] = g.name;
     }
-    setAllMovies(newMovies);
-  };
 
-  // const handleDeleteMovie = useCallback(
-  //   (id: number) => {
-  //     const newMovies = [];
-  //     for (let i = 0; i < allMovies.length; i++) {
-  //       if (allMovies[i].id === id) {
-  //         console.log("DELETING MOVIE >>>", allMovies[i].title);
-  //         continue;
-  //       }
-  //       newMovies.push(allMovies[i]);
-  //     }
-  //     setAllMovies(newMovies);
-  //   }, [allMovies]);
+    window.localStorage.setItem("genres", JSON.stringify(genreMap));
 
-  return (
-    <div className="app">
-      {!showList ?
-        (
-          <div className="home">
-            <h1><span className="highlight">Classes</span> vs Hooks</h1>
-            <img src={process.env.PUBLIC_URL + "image.png"} alt="hooks" />
-            <br />
-            <button onClick={handleToggleView}>Render List</button>
-          </div>
-        ) : (
-          <div className="list-container">
-            <div className="stickybar">
-              <button onClick={handleToggleView}>Back</button>
+    return genreMap;
+  }
+  
+  private handleGenerateMovieSet = (data: any) => {
+    const movieSet: IMovie[] = [];
+    for (let i = 0; i < data.results.length; i++) {
+      const movie = data.results[i];
+      movieSet.push({
+        id: movie.id,
+        genres: movie.genre_ids.map(this.handleFindGenre),
+        overview: movie.overview,
+        popularity: movie.popularity,
+        title: movie.title,
+        vote_average: movie.vote_average,
+        release_date: movie.release_date,
+      });
+    }
+    return movieSet;
+  }
+
+  private handleFindGenre = (id: number) => {
+    return (this.state.genreMap || {})[id];
+  }
+  
+  private async handleFetchMovies(): Promise<IMovie[]> {
+    let allMovies: IMovie[] = [];
+    for (let i = 1; i <= 25; i++) {
+      const mSet = await fetch(
+        API_URL +
+        `discover/movie?api_key=${process.env.REACT_APP_API_KEY}&sort_by=popularity.desc&page=${i}`,
+      )
+        .then(this.handleGenerateJson)
+        .then(this.handleGenerateMovieSet);
+
+      allMovies = allMovies.concat(mSet);
+    }
+    return allMovies;
+  }
+
+  private handleToggleView = () => {
+    this.setState({ showList: !this.state.showList });
+  }
+
+  private handleDeleteMovie = (id: number) => {
+    const allMovies = this.state.allMovies;
+
+    if (!Array.isArray(allMovies)) {
+      return;
+    }
+
+    const filteredMovies: IMovie[] = [];     
+    
+    for (let i = 0; i < allMovies.length; i++) {
+      if (allMovies[i].id !== id) {
+        filteredMovies.push(allMovies[i]);
+      }
+    }
+
+    this.setState({ allMovies: filteredMovies });
+  }
+
+  public render() {
+    const { showList, allMovies } = this.state;
+    return (
+      <div className="app">
+        {!showList ?
+          (
+            <div className="home">
+              <h1><span className="highlight">Classes</span> vs Hooks</h1>
+              <img src={process.env.PUBLIC_URL + "image.png"} alt="hooks" />
+              <br />
+              <button onClick={this.handleToggleView}>Render List</button>
             </div>
-            {allMovies && <List movies={allMovies} onDeleteMovie={handleDeleteMovie} />}
-          </div>
-        )}
-    </div>
-  );
+          ) : (
+            <div className="list-container">
+              <div className="stickybar">
+                <button onClick={this.handleToggleView}>Back</button>
+              </div>
+              {Array.isArray(allMovies) && <List movies={allMovies} onDeleteMovie={this.handleDeleteMovie} />}
+            </div>
+          )}
+      </div>
+    );
+  }
 }

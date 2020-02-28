@@ -8,6 +8,6 @@ export interface IMovie {
   release_date: string;
 }
 
-export interface IGenre {
+export interface IGenreMap {
   [id: number]: string;
 }

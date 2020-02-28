@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { List } from "./List";
-import { IMovie, IGenre } from "../interfaces";
+import { IMovie, IGenreMap } from "../interfaces";
 import "../styles/App.css";
 
 const API_URL = "https://api.themoviedb.org/3/";
@@ -10,10 +10,10 @@ const API_URL = "https://api.themoviedb.org/3/";
  * Fetch genres, map genre id to name in state, cache to local storage
  */
 export function HooksApp(): JSX.Element {
-  const [genreMap, setGenreMap] = useState<IGenre>({});
+  const [genreMap, setGenreMap] = useState<IGenreMap>({});
   useEffect(function () {
     // Check local storage if cached
-    let genreData: IGenre = {};
+    let genreData: IGenreMap = {};
     let storedData = window.localStorage.getItem("genres");
 
     if (!storedData) {
